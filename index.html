@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Chat</title>
+</head>
+<body>    
+    <div class="login-form">
+        <input type="text" id="username" placeholder="Digite seu nome" required>
+        <input type="text" id="room" placeholder="Digite a sala" required>
+        <button onclick="joinChat()">Entrar no Chat</button>
+    </div>
+
+    <div class="chat-window" id="chatWindow" style="display: none;">
+        <div class="chat-header">
+            <h3 id="chatTitle">Chat</h3>
+            <button onclick="closeChat()">X</button>
+        </div>
+        <div id="chat" class="chat-body"></div>
+        <div class="chat-footer">
+            <input type="text" id="message" placeholder="Digite sua mensagem...">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        let ws;
+        let username = '';
+        let room = '';
+
+        function joinChat() {
+            username = document.getElementById('username').value;
+            room = document.getElementById('room').value;
+
+            if (!username.trim() || !room.trim()) {
+                alert('Por favor, digite seu nome e a sala.');
+                return;
+            }
+
+            document.querySelector('.login-form').style.display = 'none';
+            document.getElementById('chatTitle').innerText = `${room}`;
+            document.getElementById('chatWindow').style.display = 'flex';
+
+            ws = new WebSocket('ws://localhost:3000');
+
+            ws.onopen = () => {
+                ws.send(JSON.stringify({ type: 'join', room: room, username: username }));
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'message') {
+                    displayMessage(data.text, data.username);
+                }
+            };
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('message');
+            const text = input.value;
+
+            if (text.trim() !== '') {
+                displayMessage(text, 'Você');
+                ws.send(JSON.stringify({ type: 'message', text: text, room: room, username: username }));
+            }
+
+            input.value = '';
+        }
+
+        function displayMessage(text, sender) {
+            const chat = document.getElementById('chat');
+            chat.innerHTML += `<p><strong>${sender}:</strong> ${text}</p>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function closeChat() {
+            document.getElementById('chatWindow').style.display = 'none';
+            ws.close();
+        }
+
+        document.querySelector('.chat-header').addEventListener('click', function() {
+    const chatWindow = document.querySelector('.chat-window');
+    chatWindow.classList.toggle('collapsed');
+});
+
+        
+    </script>
+</body>
+</html>
