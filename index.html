@@ -43,7 +43,7 @@
             document.getElementById('chatTitle').innerText = `${room}`;
             document.getElementById('chatWindow').style.display = 'flex';
 
-            ws = new WebSocket('ws://chat-websocket-ymwc.onrender.com');
+            ws = new WebSocket('wss://chat-websocket-ymwc.onrender.com');
 
             ws.onopen = () => {
                 ws.send(JSON.stringify({ type: 'join', room: room, username: username }));
