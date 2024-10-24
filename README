@@ -2,4 +2,4 @@ Chat(em desenvolvimento) Este é um projeto de chat em tempo real, desenvolvido 
 
 Como Executar: instale as dependências executando npm install. Inicie o servidor com node server.js. Execute Index.html
 
-Deploy do chat(pode ser que em breve deixe de funcionar o link: https://chat-websocket-front.onrender.com/
+Deploy do chat(pode ser que em breve o link deixe de funcionar): https://chat-websocket-front.onrender.com/
